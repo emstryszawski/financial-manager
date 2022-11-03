@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Financial Manager</string>
+    <string name="date">26 października</string>
+    <string name="placeNameMock">Hala Koszyki</string>
+    <string name="categoryMock">Wyjścia i wydarzenia</string>
+    <string name="amountMock">-100,00zł</string>
+    <string name="IncomesAndOutcomesLabel">Podsumowanie</string>
+    <string name="incomes">Przychody</string>
+    <string name="outcomes">Wydatki</string>
+    <string name="expensesAmount">2115,15zł</string>
+    <string name="expenses">Wydatki</string>
+    <string name="addNewRecordContentDescription">Add new income or expense</string>
+    <string name="incomesAmount">5137,13zł</string>
+</resources>
