@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".TransactionsListActivity">
 
     <TextView
         android:id="@+id/incomesAndOutcomesTextView"
@@ -83,7 +83,7 @@
     </TableLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/addNewRecordButton"
+        android:id="@+id/new_transaction_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -96,7 +96,7 @@
         app:srcCompat="@android:drawable/ic_menu_add" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/incomesAndOutcomesRecyclerView"
+        android:id="@+id/transactions_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
@@ -104,9 +104,9 @@
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/addNewRecordButton"
+        app:layout_constraintTop_toTopOf="@+id/new_transaction_fab"
         tools:itemCount="8"
-        tools:listitem="@layout/financial_record">
+        tools:listitem="@layout/transaction">
 
     </androidx.recyclerview.widget.RecyclerView>
 
