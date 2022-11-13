@@ -16,7 +16,7 @@ class TransactionsListActivity : AppCompatActivity() {
 
         binding.transactionsRecyclerView.layoutManager = LinearLayoutManager(this)
 
-        val transactionsAdapter = TransactionsAdapter(view.context) { transactionOnClick() }
+        val transactionsAdapter = TransactionsAdapter { transactionOnClick() }
 
         binding.transactionsRecyclerView.adapter = transactionsAdapter
 

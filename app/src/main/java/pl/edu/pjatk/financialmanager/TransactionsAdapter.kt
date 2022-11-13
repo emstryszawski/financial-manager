@@ -1,32 +1,22 @@
 package pl.edu.pjatk.financialmanager
 
-import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import pl.edu.pjatk.financialmanager.databinding.TransactionBinding
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class TransactionsAdapter(private val context: Context, private val onClick: (Transaction) -> Unit) :
+class TransactionsAdapter(
+    private val onClick: (Transaction) -> Unit
+) :
     RecyclerView.Adapter<TransactionsAdapter.TransactionViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionViewHolder {
-        return TransactionViewHolder(
-            LayoutInflater
-                .from(context)
-                .inflate(R.layout.transaction, parent, false),
-            onClick
-        )
-    }
-
+    /* TODO(Remove hardcoded data for sql lite database) */
     private val transactionListMock = mockedData()
-
     private fun mockedData(): List<Transaction> {
         return listOf(
             Transaction(1, "Żabka", BigDecimal("21.19"), "Żywność", LocalDate.now()),
@@ -37,17 +27,20 @@ class TransactionsAdapter(private val context: Context, private val onClick: (Tr
         )
     }
 
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionViewHolder {
+        return TransactionViewHolder(
+            TransactionBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false
+            ), onClick
+        )
+    }
+
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
         val transaction = transactionListMock[position]
         holder.bind(transaction)
-        if (transaction.value < BigDecimal.ZERO) {
-            holder.itemView.findViewById<TextView>(R.id.amount).setTextColor(
-                ContextCompat.getColor(
-                    context,
-                    R.color.negative_amount
-                )
-            )
-        }
+
+        holder.takeIf { transaction.isExpense() }
+            ?.apply { setAmountColorTo(R.color.negative_amount) }
     }
 
     override fun getItemCount(): Int {
@@ -55,14 +48,14 @@ class TransactionsAdapter(private val context: Context, private val onClick: (Tr
     }
 
     class TransactionViewHolder(
-        transactionView: View,
+        private val binding: TransactionBinding,
         val onClick: (Transaction) -> Unit
     ) :
-        RecyclerView.ViewHolder(transactionView) {
+        RecyclerView.ViewHolder(binding.root) {
         private var currentTransaction: Transaction? = null
 
         init {
-            itemView.findViewById<CardView>(R.id.card_view_transaction).setOnClickListener {
+            binding.cardViewTransaction.setOnClickListener {
                 currentTransaction?.let {
                     onClick(it)
                 }
@@ -72,9 +65,18 @@ class TransactionsAdapter(private val context: Context, private val onClick: (Tr
         fun bind(transaction: Transaction) {
             currentTransaction = transaction
 
-            itemView.findViewById<TextView>(R.id.placeName).text = transaction.title
-            itemView.findViewById<TextView>(R.id.amount).text = transaction.value.toPlainString()
-            itemView.findViewById<TextView>(R.id.date).text = transaction.date.format(DateTimeFormatter.ISO_DATE)
+            binding.placeName.text = transaction.title
+            binding.amount.text = transaction.value.toPlainString()
+            binding.date.text = transaction.date.format(DateTimeFormatter.ISO_DATE)
+        }
+
+        fun setAmountColorTo(colorId: Int) {
+            binding.amount.setTextColor(
+                ContextCompat.getColor(
+                    binding.root.context,
+                    colorId
+                )
+            )
         }
     }
 }
