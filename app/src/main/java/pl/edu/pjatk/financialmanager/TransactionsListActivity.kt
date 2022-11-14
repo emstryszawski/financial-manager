@@ -1,6 +1,9 @@
 package pl.edu.pjatk.financialmanager
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import pl.edu.pjatk.financialmanager.databinding.ActivityTransactionsListBinding
@@ -15,14 +18,12 @@ class TransactionsListActivity : AppCompatActivity() {
         setContentView(view)
 
         binding.transactionsRecyclerView.layoutManager = LinearLayoutManager(this)
-
         val transactionsAdapter = TransactionsAdapter { transactionOnClick() }
-
         binding.transactionsRecyclerView.adapter = transactionsAdapter
 
-//        binding.newTransactionFab.setOnClickListener {
-//            addNewTransaction()
-//        }
+        binding.newTransactionFab.setOnClickListener {
+            addNewTransaction()
+        }
     }
 
     private fun transactionOnClick() {
@@ -30,6 +31,14 @@ class TransactionsListActivity : AppCompatActivity() {
     }
 
     private fun addNewTransaction() {
-        TODO("Not yet implemented")
+        openAddNewTransactionActivity.launch(Unit)
     }
+
+    private val openAddNewTransactionActivity =
+        registerForActivityResult(NewTransactionActivityContract()) { result ->
+            if (result != null) Toast.makeText(this, "$result", Toast.LENGTH_SHORT)
+                .show()
+            else
+                Toast.makeText(this, "No data", Toast.LENGTH_SHORT).show()
+        }
 }

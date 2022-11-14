@@ -11,4 +11,5 @@
     <string name="expenses">Wydatki</string>
     <string name="addNewRecordContentDescription">Add new income or expense</string>
     <string name="incomesAmount">5137,13zł</string>
+    <string name="saveAndContinue">Zapisz</string>
 </resources>
