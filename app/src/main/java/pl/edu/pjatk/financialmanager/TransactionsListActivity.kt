@@ -1,7 +1,9 @@
 package pl.edu.pjatk.financialmanager
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import pl.edu.pjatk.financialmanager.databinding.ActivityTransactionsListBinding
 
@@ -11,18 +13,25 @@ class TransactionsListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTransactionsListBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
+        setContentView(binding.root)
 
         binding.transactionsRecyclerView.layoutManager = LinearLayoutManager(this)
-
-        val transactionsAdapter = TransactionsAdapter { transactionOnClick() }
-
+        val transactionsAdapter = TransactionsAdapter() { transactionOnClick() }
         binding.transactionsRecyclerView.adapter = transactionsAdapter
 
-//        binding.newTransactionFab.setOnClickListener {
-//            addNewTransaction()
-//        }
+
+        val transactionListViewModel = ViewModelProvider(
+            this,
+            TransactionListViewModel.Factory
+        )[TransactionListViewModel::class.java]
+
+        transactionListViewModel.allTransactions.observe(this) {
+            transactionsAdapter.submitList(it)
+        }
+
+        binding.newTransactionFab.setOnClickListener {
+            addNewTransaction()
+        }
     }
 
     private fun transactionOnClick() {
@@ -30,6 +39,14 @@ class TransactionsListActivity : AppCompatActivity() {
     }
 
     private fun addNewTransaction() {
-        TODO("Not yet implemented")
+        openAddNewTransactionActivity.launch(Unit)
     }
+
+    private val openAddNewTransactionActivity =
+        registerForActivityResult(NewTransactionActivityContract()) { result ->
+            if (result != null) Toast.makeText(this, "$result", Toast.LENGTH_SHORT)
+                .show()
+            else
+                Toast.makeText(this, "No data", Toast.LENGTH_SHORT).show()
+        }
 }
