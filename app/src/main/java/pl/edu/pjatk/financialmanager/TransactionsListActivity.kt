@@ -1,10 +1,9 @@
 package pl.edu.pjatk.financialmanager
 
-import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import pl.edu.pjatk.financialmanager.databinding.ActivityTransactionsListBinding
 
@@ -14,12 +13,21 @@ class TransactionsListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTransactionsListBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
+        setContentView(binding.root)
 
         binding.transactionsRecyclerView.layoutManager = LinearLayoutManager(this)
-        val transactionsAdapter = TransactionsAdapter { transactionOnClick() }
+        val transactionsAdapter = TransactionsAdapter() { transactionOnClick() }
         binding.transactionsRecyclerView.adapter = transactionsAdapter
+
+
+        val transactionListViewModel = ViewModelProvider(
+            this,
+            TransactionListViewModel.Factory
+        )[TransactionListViewModel::class.java]
+
+        transactionListViewModel.allTransactions.observe(this) {
+            transactionsAdapter.submitList(it)
+        }
 
         binding.newTransactionFab.setOnClickListener {
             addNewTransaction()
