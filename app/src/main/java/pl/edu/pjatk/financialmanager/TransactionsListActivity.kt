@@ -1,14 +1,25 @@
 package pl.edu.pjatk.financialmanager
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
+import android.util.Log
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import pl.edu.pjatk.financialmanager.databinding.ActivityTransactionsListBinding
+import pl.edu.pjatk.financialmanager.persistance.Transaction
+import java.math.BigDecimal
+import java.time.LocalDate
 
 class TransactionsListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityTransactionsListBinding
+    private lateinit var transactionListViewModel: TransactionListViewModel
+
+    private lateinit var transactionsAdapter: TransactionsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -16,11 +27,11 @@ class TransactionsListActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.transactionsRecyclerView.layoutManager = LinearLayoutManager(this)
-        val transactionsAdapter = TransactionsAdapter() { transactionOnClick() }
+        transactionsAdapter = TransactionsAdapter { transactionOnClick() }
         binding.transactionsRecyclerView.adapter = transactionsAdapter
 
 
-        val transactionListViewModel = ViewModelProvider(
+        transactionListViewModel = ViewModelProvider(
             this,
             TransactionListViewModel.Factory
         )[TransactionListViewModel::class.java]
@@ -39,14 +50,35 @@ class TransactionsListActivity : AppCompatActivity() {
     }
 
     private fun addNewTransaction() {
-        openAddNewTransactionActivity.launch(Unit)
+        activityLauncher.launch(Intent(this, AddNewTransactionActivity::class.java))
     }
 
-    private val openAddNewTransactionActivity =
-        registerForActivityResult(NewTransactionActivityContract()) { result ->
-            if (result != null) Toast.makeText(this, "$result", Toast.LENGTH_SHORT)
-                .show()
-            else
-                Toast.makeText(this, "No data", Toast.LENGTH_SHORT).show()
+    private var activityLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (it.resultCode == Activity.RESULT_OK && it.data != null) {
+            val newTransaction = getTransactionFromResult(it)
+            val id = transactionListViewModel.addNewTransaction(newTransaction)
+
+            id.observe(this) { transactionId ->
+                Log.d("MainActivity", "transactionId in Activity: $transactionId")
+
+//                binding.transactionsRecyclerView.smoothScrollToPosition(
+//                    transactionsAdapter.getPositionOfTransactionById(transactionId.toInt())
+//                )
+            }
         }
+    }
+
+    private fun getTransactionFromResult(result: ActivityResult): Transaction {
+        val transaction = result.data!!
+        val title = transaction.getStringExtra("title")
+        val amount = transaction.getStringExtra("amount")
+        val category = transaction.getStringExtra("category")
+        val year = transaction.getIntExtra("year", LocalDate.now().year)
+        val month = transaction.getIntExtra("month", LocalDate.now().monthValue)
+        val day = transaction.getIntExtra("day", LocalDate.now().dayOfMonth)
+        val dot = LocalDate.of(year, month, day)
+        return Transaction(title!!, BigDecimal(amount), category, dot)
+    }
 }

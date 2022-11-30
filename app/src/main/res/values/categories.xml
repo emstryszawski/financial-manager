@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="categories">
+        <item>Bez kategorii</item>
+        <item>Paliwo</item>
+        <item>Parking i opłaty</item>
+        <item>Alkohol</item>
+        <item>Papierosy</item>
+        <item>Jedzenie poza domem</item>
+        <item>Żywność i chemia domowa</item>
+        <item>Codzienne wydatki</item>
+        <item>Zwierzęta</item>
+        <item>Akcesoria i wyposażenie domu</item>
+        <item>Dzieci</item>
+        <item>Firmowe</item>
+        <item>Edukacja</item>
+        <item>Odzież i obuwie</item>
+        <item>Elektronika</item>
+        <item>Czynsz i wynajem</item>
+        <item>Rozrywka</item>
+        <item>Wyjścia i wydarzenia</item>
+        <item>Podróże</item>
+    </string-array>
+</resources>

@@ -2,7 +2,7 @@ package pl.edu.pjatk.financialmanager.persistance
 
 import androidx.room.TypeConverter
 import java.math.BigDecimal
-import java.util.*
+import java.time.LocalDate
 
 class Converters {
     @TypeConverter
@@ -16,12 +16,12 @@ class Converters {
     }
 
     @TypeConverter
-    fun fromDateToTimestamp(value: Date?): Long? {
-        return value?.time?.toLong()
+    fun fromDateToString(value: LocalDate?): String? {
+        return value?.toString()
     }
 
     @TypeConverter
-    fun fromTimestampToDate(value: Long?): Date? {
-        return value?.let { Date(it) }
+    fun fromStringToDate(value: String?): LocalDate? {
+        return value?.let { LocalDate.parse(it) }
     }
 }

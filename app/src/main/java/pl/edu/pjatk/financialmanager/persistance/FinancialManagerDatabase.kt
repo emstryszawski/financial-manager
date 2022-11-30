@@ -9,9 +9,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
+import java.time.LocalDate
 import java.util.*
 
-@Database(entities = [Transaction::class], version = 1, exportSchema = true)
+@Database(entities = [Transaction::class], version = 2, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class FinancialManagerDatabase : RoomDatabase() {
 
@@ -28,6 +29,7 @@ abstract class FinancialManagerDatabase : RoomDatabase() {
                     FinancialManagerDatabase::class.java,
                     "financial_manager_database"
                 )
+                    .fallbackToDestructiveMigration()
                     .addCallback(FinancialManagerDatabaseCallback(scope))
                     .build()
                 INSTANCE = instance
@@ -51,26 +53,15 @@ abstract class FinancialManagerDatabase : RoomDatabase() {
 
         private fun populateDatabase(transactionDao: TransactionDao) {
             transactionDao.deleteAll()
-            val calendar = Calendar.getInstance()
-            transactionDao.insertAll(
-                Transaction(1, "Żabka", BigDecimal("21.19"), "Żywność", calendar.time),
-                Transaction(2, "Biedronka", BigDecimal("130.99"), "Żywność", calendar.time),
-                Transaction(
-                    3,
-                    "Myjnia bezdotykowa",
-                    BigDecimal("30.00"),
-                    "Samochód",
-                    calendar.time
-                ),
-                Transaction(
-                    4,
-                    "Shell Racing 100",
-                    BigDecimal("-300.12"),
-                    "Samochód",
-                    calendar.time
-                ),
-                Transaction(5, "ITN PJATK", BigDecimal("900.00"), "Uczelnia", calendar.time)
-            )
+            scope.launch {
+                transactionDao.insertAll(
+                    Transaction("Żabka", BigDecimal("21.19"), "Żywność", LocalDate.now(), 1),
+                    Transaction("Biedronka", BigDecimal("130.99"), "Żywność", LocalDate.now(), 2),
+                    Transaction("Myjnia", BigDecimal("30.00"), "Samochód", LocalDate.now(), 3),
+                    Transaction("Paliwo", BigDecimal("-300.12"), "Samochód", LocalDate.now(), 4),
+                    Transaction("ITN", BigDecimal("900.00"), "Uczelnia", LocalDate.now(), 5)
+                )
+            }
         }
     }
 

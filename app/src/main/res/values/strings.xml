@@ -12,4 +12,9 @@
     <string name="addNewRecordContentDescription">Add new income or expense</string>
     <string name="incomesAmount">5137,13zł</string>
     <string name="saveAndContinue">Zapisz</string>
+    <string name="transactionTitle">Nazwa</string>
+    <string name="currency">PLN</string>
+    <string name="currencyHint">0,00 zł</string>
+    <string name="today">11/23/2022</string>
+    <string name="SwitchIncome">Przychód?</string>
 </resources>
