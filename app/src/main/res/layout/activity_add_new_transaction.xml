@@ -6,35 +6,85 @@
     android:layout_height="match_parent"
     tools:context=".AddNewTransactionActivity">
 
-    <EditText
-        android:id="@+id/editTextTextPersonName"
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/titleInputText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="100dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="64dp"
+        android:layout_marginEnd="48dp"
         android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Nazwa"
+        android:hint="@string/transactionTitle"
+        android:inputType="text"
+        android:textColorHint="#78909C"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/datePickerButton"
-        android:layout_width="wrap_content"
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/amountInputText"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="@+id/editTextTextPersonName"
-        app:layout_constraintStart_toStartOf="@+id/editTextTextPersonName"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:hint="@string/currencyHint"
+        android:inputType="numberSigned|numberDecimal"
+        android:imeOptions="actionGo"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:textAlignment="viewEnd"
+        android:textColorHint="#78909C"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toStartOf="@+id/switchToIncome"
+        app:layout_constraintStart_toStartOf="@+id/titleInputText"
+        app:layout_constraintTop_toBottomOf="@+id/titleInputText"
+        tools:ignore="DuplicateSpeakableTextCheck" />
+
+    <DatePicker
+        android:id="@+id/datePicker"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:calendarViewShown="false"
+        android:datePickerMode="spinner"
+        app:layout_constraintEnd_toEndOf="@+id/titleInputText"
+        app:layout_constraintStart_toStartOf="@+id/amountInputText"
+        app:layout_constraintTop_toBottomOf="@+id/amountInputText" />
+
+    <Spinner
+        android:id="@+id/categorySpinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:entries="@array/categories"
+        android:minHeight="48dp"
+        android:spinnerMode="dropdown"
+        app:layout_constraintEnd_toEndOf="@+id/datePicker"
+        app:layout_constraintStart_toStartOf="@+id/datePicker"
+        app:layout_constraintTop_toBottomOf="@+id/datePicker" />
 
     <Button
         android:id="@+id/saveAndContinueButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="200dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="50dp"
         android:text="@string/saveAndContinue"
-        app:layout_constraintEnd_toEndOf="@+id/datePickerButton"
-        app:layout_constraintStart_toStartOf="@+id/datePickerButton"
-        app:layout_constraintTop_toBottomOf="@+id/datePickerButton" />
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/categorySpinner"
+        app:layout_constraintStart_toStartOf="@+id/categorySpinner"
+        app:layout_constraintTop_toBottomOf="@+id/categorySpinner" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switchToIncome"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:text="@string/SwitchIncome"
+        app:layout_constraintBottom_toBottomOf="@+id/amountInputText"
+        app:layout_constraintEnd_toEndOf="@+id/titleInputText"
+        app:layout_constraintTop_toTopOf="@+id/amountInputText" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

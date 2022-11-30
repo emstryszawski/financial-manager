@@ -4,8 +4,9 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
+import pl.edu.pjatk.financialmanager.persistance.Transaction
 
-class NewTransactionActivityContract : ActivityResultContract<Unit, String?>() {
+class NewTransactionActivityContract : ActivityResultContract<Unit, Long?>() {
 
     companion object {
         const val TRANSACTION = "TRANSACTION CONTRACT"
@@ -15,8 +16,8 @@ class NewTransactionActivityContract : ActivityResultContract<Unit, String?>() {
         return Intent(context, AddNewTransactionActivity::class.java)
     }
 
-    override fun parseResult(resultCode: Int, intent: Intent?): String? {
-        val data = intent?.getStringExtra(TRANSACTION)
-        return if (resultCode == Activity.RESULT_OK && !data.isNullOrEmpty()) data else null
+    override fun parseResult(resultCode: Int, intent: Intent?): Long? {
+        val data = intent?.getLongExtra(TRANSACTION, 0)
+        return if (resultCode == Activity.RESULT_OK && data != 0L) data else null
     }
 }

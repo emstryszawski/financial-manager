@@ -21,11 +21,19 @@ class TransactionsAdapter(
 
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
         val transaction = getItem(position)
+        holder.bind(transaction)
         holder.takeIf { transaction.isExpense() }
             ?.apply {
-                bind(transaction)
                 setAmountColorTo(R.color.negative_amount)
             }
+    }
+
+    fun getPositionOfTransactionById(id: Int): Int {
+        val get = currentList.stream().filter { transaction ->
+            transaction.id == id
+        }.findFirst()
+            .get()
+        return currentList.indexOf(get)
     }
 
     class TransactionViewHolder(
@@ -59,8 +67,9 @@ class TransactionsAdapter(
             currentTransaction = transaction
 
             binding.placeName.text = transaction.title
-            binding.amount.text = transaction.value.toPlainString()
-            binding.date.text = transaction.date?.time.toString()
+            binding.amount.text = transaction.amount.toPlainString()
+            binding.date.text = transaction.dateOfTransaction?.toString()
+            binding.category.text = transaction.category
         }
 
         fun setAmountColorTo(colorId: Int) {
