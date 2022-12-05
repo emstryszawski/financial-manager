@@ -3,21 +3,22 @@ package pl.edu.pjatk.financialmanager
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import pl.edu.pjatk.financialmanager.adapter.TransactionsAdapter
 import pl.edu.pjatk.financialmanager.databinding.ActivityTransactionsListBinding
-import pl.edu.pjatk.financialmanager.persistance.Transaction
+import pl.edu.pjatk.financialmanager.persistance.model.Transaction
+import pl.edu.pjatk.financialmanager.viewmodel.TransactionViewModel
 import java.math.BigDecimal
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 class TransactionsListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityTransactionsListBinding
-    private lateinit var transactionListViewModel: TransactionListViewModel
+    private lateinit var transactionViewModel: TransactionViewModel
 
     private lateinit var transactionsAdapter: TransactionsAdapter
 
@@ -31,12 +32,12 @@ class TransactionsListActivity : AppCompatActivity() {
         binding.transactionsRecyclerView.adapter = transactionsAdapter
 
 
-        transactionListViewModel = ViewModelProvider(
+        transactionViewModel = ViewModelProvider(
             this,
-            TransactionListViewModel.Factory
-        )[TransactionListViewModel::class.java]
+            TransactionViewModel.Factory
+        )[TransactionViewModel::class.java]
 
-        transactionListViewModel.allTransactions.observe(this) {
+        transactionViewModel.allTransactions.observe(this) {
             transactionsAdapter.submitList(it)
         }
 
@@ -45,12 +46,9 @@ class TransactionsListActivity : AppCompatActivity() {
         }
     }
 
+    // TODO
     private fun transactionOnClick() {
         print("click")
-    }
-
-    private fun addNewTransaction() {
-        activityLauncher.launch(Intent(this, AddNewTransactionActivity::class.java))
     }
 
     private var activityLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(
@@ -58,15 +56,16 @@ class TransactionsListActivity : AppCompatActivity() {
     ) {
         if (it.resultCode == Activity.RESULT_OK && it.data != null) {
             val newTransaction = getTransactionFromResult(it)
-            val id = transactionListViewModel.addNewTransaction(newTransaction)
+//            val id =
+            transactionViewModel.addNewTransaction(newTransaction)
 
-            id.observe(this) { transactionId ->
-                Log.d("MainActivity", "transactionId in Activity: $transactionId")
+            // TODO get id and then get position in list to scroll to newly inserted item
+//            id.observe(this) { transactionId ->
+//                Log.d("MainActivity", "transactionId in Activity: $transactionId")
 
 //                binding.transactionsRecyclerView.smoothScrollToPosition(
 //                    transactionsAdapter.getPositionOfTransactionById(transactionId.toInt())
 //                )
-            }
         }
     }
 
@@ -75,10 +74,14 @@ class TransactionsListActivity : AppCompatActivity() {
         val title = transaction.getStringExtra("title")
         val amount = transaction.getStringExtra("amount")
         val category = transaction.getStringExtra("category")
-        val year = transaction.getIntExtra("year", LocalDate.now().year)
-        val month = transaction.getIntExtra("month", LocalDate.now().monthValue)
-        val day = transaction.getIntExtra("day", LocalDate.now().dayOfMonth)
-        val dot = LocalDate.of(year, month, day)
+        val year = transaction.getIntExtra("year", LocalDateTime.now().year)
+        val month = transaction.getIntExtra("month", LocalDateTime.now().monthValue)
+        val day = transaction.getIntExtra("day", LocalDateTime.now().dayOfMonth)
+        val dot = LocalDateTime.of(year, month, day, 0, 0, 0)
         return Transaction(title!!, BigDecimal(amount), category, dot)
+    }
+
+    private fun addNewTransaction() {
+        activityLauncher.launch(Intent(this, AddNewTransactionActivity::class.java))
     }
 }

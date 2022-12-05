@@ -1,4 +1,4 @@
-package pl.edu.pjatk.financialmanager
+package pl.edu.pjatk.financialmanager.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,9 +6,12 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import pl.edu.pjatk.financialmanager.TransactionsAdapter.TransactionViewHolder
+import pl.edu.pjatk.financialmanager.R
+import pl.edu.pjatk.financialmanager.adapter.TransactionsAdapter.TransactionViewHolder
 import pl.edu.pjatk.financialmanager.databinding.TransactionBinding
-import pl.edu.pjatk.financialmanager.persistance.Transaction
+import pl.edu.pjatk.financialmanager.persistance.model.Transaction
+import pl.edu.pjatk.financialmanager.util.CurrencyFormatter
+import java.time.format.DateTimeFormatter
 
 class TransactionsAdapter(
     private val onClick: (Transaction) -> Unit
@@ -28,6 +31,7 @@ class TransactionsAdapter(
             }
     }
 
+    @Suppress("unused")
     fun getPositionOfTransactionById(id: Int): Int {
         val get = currentList.stream().filter { transaction ->
             transaction.id == id
@@ -67,8 +71,9 @@ class TransactionsAdapter(
             currentTransaction = transaction
 
             binding.placeName.text = transaction.title
-            binding.amount.text = transaction.amount.toPlainString()
-            binding.date.text = transaction.dateOfTransaction?.toString()
+            binding.amount.text = CurrencyFormatter.toCurrencyFormat(transaction.amount)
+            binding.date.text =
+                String.format(transaction.dateOfTransaction.format(DateTimeFormatter.ISO_LOCAL_DATE))
             binding.category.text = transaction.category
         }
 

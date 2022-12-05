@@ -1,36 +1,25 @@
-package pl.edu.pjatk.financialmanager
+package pl.edu.pjatk.financialmanager.viewmodel
 
 import androidx.lifecycle.*
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.CreationExtras
 import kotlinx.coroutines.*
-import pl.edu.pjatk.financialmanager.persistance.Transaction
-import pl.edu.pjatk.financialmanager.persistance.TransactionRepository
+import pl.edu.pjatk.financialmanager.FinancialManagerApplication
+import pl.edu.pjatk.financialmanager.persistance.model.Transaction
+import pl.edu.pjatk.financialmanager.persistance.repository.TransactionRepository
 
-class TransactionListViewModel(
+class TransactionViewModel(
     private val repository: TransactionRepository
 ) : ViewModel() {
 
     val allTransactions: LiveData<List<Transaction>> = repository.allTransactions.asLiveData()
-
-//    fun addNewTransaction(transaction: Transaction): Long? {
-//        val liveData = MutableLiveData<Long>()
-//        viewModelScope.launch(Dispatchers.IO) {
-//            val id = repository.insert(transaction)
-//            Log.d("viewModel", "id0: $id")
-//            liveData.postValue(id)
-//            Log.d("viewModel", "id1: " + liveData.value)
-//        }
-//        Log.d("viewModel", "id2: " + liveData.value)
-//        return liveData.value
-//    }
 
     fun addNewTransaction(transaction: Transaction): LiveData<Long> {
         val liveData = MutableLiveData<Long>()
         viewModelScope.launch {
             liveData.value = repository.insert(transaction)
         }
-        return liveData;
+        return liveData
     }
 
     companion object {
@@ -42,7 +31,7 @@ class TransactionListViewModel(
                 extras: CreationExtras
             ): T {
                 val application = checkNotNull(extras[APPLICATION_KEY])
-                return TransactionListViewModel(
+                return TransactionViewModel(
                     (application as FinancialManagerApplication).repository
                 ) as T
             }
