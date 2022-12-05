@@ -1,7 +1,8 @@
-package pl.edu.pjatk.financialmanager.persistance
+package pl.edu.pjatk.financialmanager.persistance.dao
 
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
+import pl.edu.pjatk.financialmanager.persistance.model.Transaction
 
 @Dao
 interface TransactionDao {

@@ -1,6 +1,5 @@
 package pl.edu.pjatk.financialmanager
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -9,17 +8,16 @@ import android.text.TextWatcher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import pl.edu.pjatk.financialmanager.databinding.ActivityAddNewTransactionBinding
-import pl.edu.pjatk.financialmanager.persistance.Transaction
-import pl.edu.pjatk.financialmanager.util.DataConverter
-import java.time.LocalDate
-import java.util.*
+import pl.edu.pjatk.financialmanager.persistance.model.Transaction
+import pl.edu.pjatk.financialmanager.util.CurrencyFormatter
+import pl.edu.pjatk.financialmanager.viewmodel.TransactionViewModel
+import java.time.LocalDateTime
 
 
 class AddNewTransactionActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddNewTransactionBinding
-    private lateinit var newTransactionViewModel: TransactionListViewModel
+    private lateinit var newTransactionViewModel: TransactionViewModel
 
-    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddNewTransactionBinding.inflate(
@@ -28,13 +26,13 @@ class AddNewTransactionActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         newTransactionViewModel = ViewModelProvider(
-            this, TransactionListViewModel.Factory
-        )[TransactionListViewModel::class.java]
+            this, TransactionViewModel.Factory
+        )[TransactionViewModel::class.java]
 
         binding.saveAndContinueButton.setOnClickListener { saveAndContinue() }
 
         binding.amountInputText.setRawInputType(Configuration.KEYBOARD_12KEY)
-        binding.amountInputText.setText(DataConverter.getZero())
+        binding.amountInputText.setText(CurrencyFormatter.getZero())
         binding.amountInputText.addTextChangedListener(object : TextWatcher {
 
             private var current = ""
@@ -44,19 +42,19 @@ class AddNewTransactionActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val input = binding.amountInputText
                 if (s.toString() != current) {
-                    input.removeTextChangedListener(this);
+                    input.removeTextChangedListener(this)
 
-                    var formatted = DataConverter.formatToAmount(s.toString())
+                    var formatted = CurrencyFormatter.formatToAmount(s.toString())
 
-                    if (!binding.switchToIncome.isChecked && DataConverter.isZero(formatted)) {
+                    if (!binding.switchToIncome.isChecked && CurrencyFormatter.isZero(formatted)) {
                         formatted = StringBuilder("-").append(formatted).toString()
                     }
 
                     current = formatted
-                    input.setText(formatted);
-                    input.setSelection(formatted.length - 3);
+                    input.setText(formatted)
+                    input.setSelection(formatted.length - 3)
 
-                    input.addTextChangedListener(this);
+                    input.addTextChangedListener(this)
                 }
             }
 
@@ -80,31 +78,33 @@ class AddNewTransactionActivity : AppCompatActivity() {
         }
     }
 
+    // TODO this coule be json
     private fun saveAndContinue() {
         val newTransaction = getTransactionFromInputs()
         val intent = Intent()
             .putExtra("title", newTransaction.title)
             .putExtra("amount", newTransaction.amount.toString())
             .putExtra("category", newTransaction.category)
-            .putExtra("year", newTransaction.dateOfTransaction?.year)
-            .putExtra("month", newTransaction.dateOfTransaction?.monthValue)
-            .putExtra("day", newTransaction.dateOfTransaction?.dayOfMonth)
+            .putExtra("year", newTransaction.dateOfTransaction.year)
+            .putExtra("month", newTransaction.dateOfTransaction.monthValue)
+            .putExtra("day", newTransaction.dateOfTransaction.dayOfMonth)
         setResult(RESULT_OK, intent)
         finish()
     }
 
     private fun getTransactionFromInputs(): Transaction {
         val title = binding.titleInputText.text.toString()
-        val amount = DataConverter.formatStringToDecimal(binding.amountInputText.text.toString())
+        val amount =
+            CurrencyFormatter.formatStringToDecimal(binding.amountInputText.text.toString())
         val date = getDateFromInput()
         val category = binding.categorySpinner.selectedItem.toString()
         return Transaction(title, amount, category, date)
     }
 
-    private fun getDateFromInput(): LocalDate {
+    private fun getDateFromInput(): LocalDateTime {
         val datePicker = binding.datePicker
-        return LocalDate.of(
-            datePicker.year, datePicker.month, datePicker.dayOfMonth
+        return LocalDateTime.of(
+            datePicker.year, datePicker.month + 1, datePicker.dayOfMonth, 0, 0, 0
         )
     }
 }

@@ -8,11 +8,13 @@ import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import pl.edu.pjatk.financialmanager.persistance.dao.TransactionDao
+import pl.edu.pjatk.financialmanager.persistance.model.Transaction
 import java.math.BigDecimal
-import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.*
 
-@Database(entities = [Transaction::class], version = 2, exportSchema = false)
+@Database(entities = [Transaction::class], version = 3, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class FinancialManagerDatabase : RoomDatabase() {
 
@@ -51,15 +53,28 @@ abstract class FinancialManagerDatabase : RoomDatabase() {
             }
         }
 
+        // TODO this doesn't work
         private fun populateDatabase(transactionDao: TransactionDao) {
             transactionDao.deleteAll()
             scope.launch {
                 transactionDao.insertAll(
-                    Transaction("Żabka", BigDecimal("21.19"), "Żywność", LocalDate.now(), 1),
-                    Transaction("Biedronka", BigDecimal("130.99"), "Żywność", LocalDate.now(), 2),
-                    Transaction("Myjnia", BigDecimal("30.00"), "Samochód", LocalDate.now(), 3),
-                    Transaction("Paliwo", BigDecimal("-300.12"), "Samochód", LocalDate.now(), 4),
-                    Transaction("ITN", BigDecimal("900.00"), "Uczelnia", LocalDate.now(), 5)
+                    Transaction("Żabka", BigDecimal("21.19"), "Żywność", LocalDateTime.now(), 1),
+                    Transaction(
+                        "Biedronka",
+                        BigDecimal("130.99"),
+                        "Żywność",
+                        LocalDateTime.now(),
+                        2
+                    ),
+                    Transaction("Myjnia", BigDecimal("30.00"), "Samochód", LocalDateTime.now(), 3),
+                    Transaction(
+                        "Paliwo",
+                        BigDecimal("-300.12"),
+                        "Samochód",
+                        LocalDateTime.now(),
+                        4
+                    ),
+                    Transaction("ITN", BigDecimal("900.00"), "Uczelnia", LocalDateTime.now(), 5)
                 )
             }
         }

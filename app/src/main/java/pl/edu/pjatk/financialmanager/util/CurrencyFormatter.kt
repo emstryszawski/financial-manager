@@ -4,9 +4,11 @@ import java.math.BigDecimal
 import java.text.NumberFormat
 import java.util.*
 
-class DataConverter {
+class CurrencyFormatter {
 
     companion object {
+        private val polandLocale: Locale = Locale("pl", "PL")
+
         @JvmStatic
         fun formatStringToDecimal(string: String): BigDecimal {
             return string.replace("[ zł,.]".toRegex(), "")
@@ -29,6 +31,13 @@ class DataConverter {
                         .toBigDecimal()
                         .divide(BigDecimal(100))
                 )
+        }
+
+        @JvmStatic
+        fun toCurrencyFormat(bigDecimal: BigDecimal): String {
+            return NumberFormat
+                .getCurrencyInstance(polandLocale)
+                .format(bigDecimal)
         }
 
         @JvmStatic

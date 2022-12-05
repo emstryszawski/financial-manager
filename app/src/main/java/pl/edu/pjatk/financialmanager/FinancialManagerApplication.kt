@@ -4,7 +4,7 @@ import android.app.Application
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import pl.edu.pjatk.financialmanager.persistance.FinancialManagerDatabase
-import pl.edu.pjatk.financialmanager.persistance.TransactionRepository
+import pl.edu.pjatk.financialmanager.persistance.repository.TransactionRepository
 
 class FinancialManagerApplication : Application() {
     private val applicationScope = CoroutineScope(SupervisorJob())

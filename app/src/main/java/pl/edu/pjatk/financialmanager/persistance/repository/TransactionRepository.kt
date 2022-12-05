@@ -1,8 +1,10 @@
-package pl.edu.pjatk.financialmanager.persistance
+package pl.edu.pjatk.financialmanager.persistance.repository
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import pl.edu.pjatk.financialmanager.persistance.dao.TransactionDao
+import pl.edu.pjatk.financialmanager.persistance.model.Transaction
 
 
 class TransactionRepository(private val transactionDao: TransactionDao) {
