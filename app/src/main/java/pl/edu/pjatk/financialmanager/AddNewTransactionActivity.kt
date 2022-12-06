@@ -17,19 +17,18 @@ import java.time.LocalDateTime
 class AddNewTransactionActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddNewTransactionBinding
     private lateinit var newTransactionViewModel: TransactionViewModel
+    private var transaction: Transaction? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityAddNewTransactionBinding.inflate(
-            layoutInflater
-        )
+        binding = ActivityAddNewTransactionBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         newTransactionViewModel = ViewModelProvider(
             this, TransactionViewModel.Factory
         )[TransactionViewModel::class.java]
 
-        binding.saveAndContinueButton.setOnClickListener { saveAndContinue() }
+        transaction = intent.getParcelableExtra("transaction", Transaction::class.java)
 
         binding.amountInputText.setRawInputType(Configuration.KEYBOARD_12KEY)
         binding.amountInputText.setText(CurrencyFormatter.getZero())
@@ -63,6 +62,48 @@ class AddNewTransactionActivity : AppCompatActivity() {
         })
 
         binding.switchToIncome.isChecked = true
+        binding.amountInputText.setRawInputType(Configuration.KEYBOARD_12KEY)
+
+        transaction?.let { it ->
+            binding.titleInputText.setText(it.title)
+            binding.amountInputText.setText(CurrencyFormatter.toCurrencyFormat(it.amount))
+            binding.categorySpinner.setSelection(it.categoryItemPosition, true)
+            it.dateOfTransaction.let { t ->
+                binding.datePicker.updateDate(t.year, t.monthValue - 1, t.dayOfMonth)
+            }
+            binding.switchToIncome.isChecked = it.isIncome()
+        }
+
+        binding.saveAndContinueButton.setOnClickListener { saveAndContinue() }
+
+        binding.amountInputText.addTextChangedListener(object : TextWatcher {
+
+            private var current = ""
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val input = binding.amountInputText
+                if (s.toString() != current) {
+                    input.removeTextChangedListener(this)
+
+                    var formatted = CurrencyFormatter.formatToAmount(s.toString())
+
+                    if (!binding.switchToIncome.isChecked && CurrencyFormatter.isZero(formatted)) {
+                        formatted = StringBuilder("-").append(formatted).toString()
+                    }
+
+                    current = formatted
+                    input.setText(formatted)
+                    input.setSelection(formatted.length - 3)
+
+                    input.addTextChangedListener(this)
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+
+        })
 
         binding.switchToIncome.setOnCheckedChangeListener { _, isChecked ->
             val text = binding.amountInputText.text.toString()
@@ -78,17 +119,18 @@ class AddNewTransactionActivity : AppCompatActivity() {
         }
     }
 
-    // TODO this coule be json
     private fun saveAndContinue() {
         val newTransaction = getTransactionFromInputs()
         val intent = Intent()
-            .putExtra("title", newTransaction.title)
-            .putExtra("amount", newTransaction.amount.toString())
-            .putExtra("category", newTransaction.category)
-            .putExtra("year", newTransaction.dateOfTransaction.year)
-            .putExtra("month", newTransaction.dateOfTransaction.monthValue)
-            .putExtra("day", newTransaction.dateOfTransaction.dayOfMonth)
-        setResult(RESULT_OK, intent)
+        if (this.intent.hasExtra("transaction")) {
+            transaction?.let {
+                intent.putExtra("transaction", updateTransaction(newTransaction))
+                setResult(RESULT_OK, intent)
+            }
+        } else {
+            intent.putExtra("newTransaction", newTransaction)
+            setResult(RESULT_OK, intent)
+        }
         finish()
     }
 
@@ -96,9 +138,20 @@ class AddNewTransactionActivity : AppCompatActivity() {
         val title = binding.titleInputText.text.toString()
         val amount =
             CurrencyFormatter.formatStringToDecimal(binding.amountInputText.text.toString())
-        val date = getDateFromInput()
         val category = binding.categorySpinner.selectedItem.toString()
-        return Transaction(title, amount, category, date)
+        val categoryItemPosition = binding.categorySpinner.selectedItemPosition
+        val date = getDateFromInput()
+        return Transaction(title, amount, category, categoryItemPosition, date)
+    }
+
+    private fun updateTransaction(newTransaction: Transaction): Transaction? {
+        return transaction?.apply {
+            this.title = newTransaction.title
+            this.amount = newTransaction.amount
+            this.category = newTransaction.category
+            this.categoryItemPosition = newTransaction.categoryItemPosition
+            this.dateOfTransaction = newTransaction.dateOfTransaction
+        }
     }
 
     private fun getDateFromInput(): LocalDateTime {

@@ -12,11 +12,14 @@ interface TransactionDao {
     @Query("SELECT * FROM `transaction` WHERE id IN (:ids)")
     fun loadAllByIds(ids: IntArray): Flow<List<Transaction>>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(transaction: Transaction): Long
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertAll(vararg transaction: Transaction): List<Long>
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun update(transaction: Transaction): Int
 
     @Delete
     fun delete(transaction: Transaction)
