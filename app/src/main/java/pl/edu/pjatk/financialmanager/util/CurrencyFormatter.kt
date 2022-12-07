@@ -34,7 +34,7 @@ class CurrencyFormatter {
         }
 
         @JvmStatic
-        fun toCurrencyFormat(bigDecimal: BigDecimal): String {
+        fun toCurrencyFormat(bigDecimal: BigDecimal?): String {
             return NumberFormat
                 .getCurrencyInstance(polandLocale)
                 .format(bigDecimal)

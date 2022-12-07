@@ -14,7 +14,7 @@ import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.*
 
-@Database(entities = [Transaction::class], version = 3, exportSchema = false)
+@Database(entities = [Transaction::class], version = 5, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class FinancialManagerDatabase : RoomDatabase() {
 
@@ -58,23 +58,25 @@ abstract class FinancialManagerDatabase : RoomDatabase() {
             transactionDao.deleteAll()
             scope.launch {
                 transactionDao.insertAll(
-                    Transaction("Żabka", BigDecimal("21.19"), "Żywność", LocalDateTime.now(), 1),
+                    Transaction("Żabka", BigDecimal("21.19"), "Żywność", 0, LocalDateTime.now(), 1),
                     Transaction(
                         "Biedronka",
                         BigDecimal("130.99"),
                         "Żywność",
+                        0,
                         LocalDateTime.now(),
                         2
                     ),
-                    Transaction("Myjnia", BigDecimal("30.00"), "Samochód", LocalDateTime.now(), 3),
+                    Transaction("Myjnia", BigDecimal("30.00"), "Samochód", 0, LocalDateTime.now(), 3),
                     Transaction(
                         "Paliwo",
                         BigDecimal("-300.12"),
                         "Samochód",
+                        0,
                         LocalDateTime.now(),
                         4
                     ),
-                    Transaction("ITN", BigDecimal("900.00"), "Uczelnia", LocalDateTime.now(), 5)
+                    Transaction("ITN", BigDecimal("900.00"), "Uczelnia", 0, LocalDateTime.now(), 5)
                 )
             }
         }

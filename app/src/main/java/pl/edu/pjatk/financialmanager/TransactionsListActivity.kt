@@ -3,7 +3,7 @@ package pl.edu.pjatk.financialmanager
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.result.ActivityResult
+import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -13,8 +13,6 @@ import pl.edu.pjatk.financialmanager.adapter.TransactionsAdapter
 import pl.edu.pjatk.financialmanager.databinding.ActivityTransactionsListBinding
 import pl.edu.pjatk.financialmanager.persistance.model.Transaction
 import pl.edu.pjatk.financialmanager.viewmodel.TransactionViewModel
-import java.math.BigDecimal
-import java.time.LocalDateTime
 
 class TransactionsListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityTransactionsListBinding
@@ -28,7 +26,7 @@ class TransactionsListActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.transactionsRecyclerView.layoutManager = LinearLayoutManager(this)
-        transactionsAdapter = TransactionsAdapter { transactionOnClick() }
+        transactionsAdapter = TransactionsAdapter(onClick = this::transactionOnClick)
         binding.transactionsRecyclerView.adapter = transactionsAdapter
 
 
@@ -47,41 +45,55 @@ class TransactionsListActivity : AppCompatActivity() {
     }
 
     // TODO
-    private fun transactionOnClick() {
-        print("click")
+    private fun transactionOnClick(transaction: Transaction) {
+        val intent = Intent(this, AddNewTransactionActivity::class.java)
+        intent.putExtra("transaction", transaction)
+//        intent.putExtra("id", transaction.id)
+//        intent.putExtra("title", transaction.title)
+//        intent.putExtra("amount", CurrencyFormatter.toCurrencyFormat(transaction.amount))
+//        intent.putExtra("category", transaction.category)
+//        intent.putExtra("categoryItemPosition", transaction.categoryItemPosition)
+//        intent.putExtra("dateOfTransaction", transaction.dateOfTransaction)
+        editTransactionLauncher.launch(intent)
     }
 
-    private var activityLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(
+    private var editTransactionLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) {
         if (it.resultCode == Activity.RESULT_OK && it.data != null) {
-            val newTransaction = getTransactionFromResult(it)
-//            val id =
-            transactionViewModel.addNewTransaction(newTransaction)
+            val updatedTransaction =
+                it.data?.getParcelableExtra("transaction", Transaction::class.java)
 
-            // TODO get id and then get position in list to scroll to newly inserted item
-//            id.observe(this) { transactionId ->
-//                Log.d("MainActivity", "transactionId in Activity: $transactionId")
-
-//                binding.transactionsRecyclerView.smoothScrollToPosition(
-//                    transactionsAdapter.getPositionOfTransactionById(transactionId.toInt())
-//                )
+            updatedTransaction?.let { transaction ->
+                transactionViewModel.updateTransaction(transaction)
+                    .observe(this) { idOfUpdatedTransaction ->
+                        Log.d(this::class.java.name, updatedTransaction.id.toString())
+                    }
+            }
         }
     }
 
-    private fun getTransactionFromResult(result: ActivityResult): Transaction {
-        val transaction = result.data!!
-        val title = transaction.getStringExtra("title")
-        val amount = transaction.getStringExtra("amount")
-        val category = transaction.getStringExtra("category")
-        val year = transaction.getIntExtra("year", LocalDateTime.now().year)
-        val month = transaction.getIntExtra("month", LocalDateTime.now().monthValue)
-        val day = transaction.getIntExtra("day", LocalDateTime.now().dayOfMonth)
-        val dot = LocalDateTime.of(year, month, day, 0, 0, 0)
-        return Transaction(title!!, BigDecimal(amount), category, dot)
+    private var newTransactionLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (it.resultCode == Activity.RESULT_OK && it.data != null) {
+            val newTransaction =
+                it.data?.getParcelableExtra("newTransaction", Transaction::class.java)
+            val id = newTransaction?.let { transaction ->
+                transactionViewModel.addNewTransaction(transaction)
+            }
+
+            // TODO get id and then get position in list to scroll to newly inserted item
+            id?.observe(this) { transactionId ->
+                Log.d(this::class.java.name, "transactionId in Activity: $transactionId")
+//                binding.transactionsRecyclerView.smoothScrollToPosition(
+//                    transactionsAdapter.getPositionOfTransactionById(transactionId)
+//                )
+            }
+        }
     }
 
     private fun addNewTransaction() {
-        activityLauncher.launch(Intent(this, AddNewTransactionActivity::class.java))
+        newTransactionLauncher.launch(Intent(this, AddNewTransactionActivity::class.java))
     }
 }

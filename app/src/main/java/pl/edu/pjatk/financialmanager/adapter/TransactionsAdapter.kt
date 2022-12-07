@@ -1,11 +1,16 @@
 package pl.edu.pjatk.financialmanager.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import pl.edu.pjatk.financialmanager.R
 import pl.edu.pjatk.financialmanager.adapter.TransactionsAdapter.TransactionViewHolder
 import pl.edu.pjatk.financialmanager.databinding.TransactionBinding
@@ -32,7 +37,7 @@ class TransactionsAdapter(
     }
 
     @Suppress("unused")
-    fun getPositionOfTransactionById(id: Int): Int {
+    fun getPositionOfTransactionById(id: Long): Int {
         val get = currentList.stream().filter { transaction ->
             transaction.id == id
         }.findFirst()

@@ -10,7 +10,11 @@ import pl.edu.pjatk.financialmanager.persistance.model.Transaction
 class TransactionRepository(private val transactionDao: TransactionDao) {
     val allTransactions: Flow<List<Transaction>> = transactionDao.getAll()
 
-    suspend fun insert(transaction: Transaction) = withContext(Dispatchers.IO) {
-        transactionDao.insert(transaction)
+    suspend fun insert(transaction: Transaction): Long = withContext(Dispatchers.IO) {
+        return@withContext transactionDao.insert(transaction)
+    }
+
+    suspend fun update(transaction: Transaction): Int = withContext(Dispatchers.IO) {
+        return@withContext transactionDao.update(transaction)
     }
 }

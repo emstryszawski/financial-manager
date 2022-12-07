@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.CreationExtras
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
 import pl.edu.pjatk.financialmanager.FinancialManagerApplication
 import pl.edu.pjatk.financialmanager.persistance.model.Transaction
 import pl.edu.pjatk.financialmanager.persistance.repository.TransactionRepository
@@ -17,7 +18,15 @@ class TransactionViewModel(
     fun addNewTransaction(transaction: Transaction): LiveData<Long> {
         val liveData = MutableLiveData<Long>()
         viewModelScope.launch {
-            liveData.value = repository.insert(transaction)
+            liveData.postValue(repository.insert(transaction))
+        }
+        return liveData
+    }
+
+    fun updateTransaction(transaction: Transaction): LiveData<Int> {
+        val liveData = MutableLiveData<Int>()
+        viewModelScope.launch {
+            liveData.postValue(repository.update(transaction))
         }
         return liveData
     }
