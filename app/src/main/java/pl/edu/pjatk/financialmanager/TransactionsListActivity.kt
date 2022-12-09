@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -26,7 +27,10 @@ class TransactionsListActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.transactionsRecyclerView.layoutManager = LinearLayoutManager(this)
-        transactionsAdapter = TransactionsAdapter(onClick = this::transactionOnClick)
+        transactionsAdapter = TransactionsAdapter(
+            onClick = this::transactionOnClick,
+            onLongClick = this::transactionOnLongClick
+        )
         binding.transactionsRecyclerView.adapter = transactionsAdapter
 
 
@@ -42,6 +46,11 @@ class TransactionsListActivity : AppCompatActivity() {
         binding.newTransactionFab.setOnClickListener {
             addNewTransaction()
         }
+    }
+
+    private fun transactionOnLongClick(transaction: Transaction) {
+        transactionViewModel.deleteTransaction(transaction)
+        Toast.makeText(this, "Transaction deleted", Toast.LENGTH_SHORT).show()
     }
 
     // TODO

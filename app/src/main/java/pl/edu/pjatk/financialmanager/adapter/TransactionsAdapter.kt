@@ -1,16 +1,11 @@
 package pl.edu.pjatk.financialmanager.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 import pl.edu.pjatk.financialmanager.R
 import pl.edu.pjatk.financialmanager.adapter.TransactionsAdapter.TransactionViewHolder
 import pl.edu.pjatk.financialmanager.databinding.TransactionBinding
@@ -19,12 +14,13 @@ import pl.edu.pjatk.financialmanager.util.CurrencyFormatter
 import java.time.format.DateTimeFormatter
 
 class TransactionsAdapter(
-    private val onClick: (Transaction) -> Unit
+    private val onClick: (Transaction) -> Unit,
+    private val onLongClick: (Transaction) -> Unit
 ) :
     ListAdapter<Transaction, TransactionViewHolder>(TransactionDiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionViewHolder {
-        return TransactionViewHolder.create(parent, onClick)
+        return TransactionViewHolder.create(parent, onClick, onLongClick)
     }
 
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
@@ -47,7 +43,8 @@ class TransactionsAdapter(
 
     class TransactionViewHolder(
         private val binding: TransactionBinding,
-        val onClick: (Transaction) -> Unit
+        val onClick: (Transaction) -> Unit,
+        val onLongClick: (Transaction) -> Unit
     ) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -59,16 +56,26 @@ class TransactionsAdapter(
                     onClick(it)
                 }
             }
+            binding.cardViewTransaction.setOnLongClickListener {
+                currentTransaction?.let {
+                    onLongClick(it)
+                }
+                return@setOnLongClickListener true
+            }
         }
 
         companion object {
-            fun create(parent: ViewGroup, onClick: (Transaction) -> Unit): TransactionViewHolder {
+            fun create(
+                parent: ViewGroup,
+                onClick: (Transaction) -> Unit,
+                onLongClick: (Transaction) -> Unit
+            ): TransactionViewHolder {
                 val binding = TransactionBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
                 )
-                return TransactionViewHolder(binding, onClick)
+                return TransactionViewHolder(binding, onClick, onLongClick)
             }
         }
 
