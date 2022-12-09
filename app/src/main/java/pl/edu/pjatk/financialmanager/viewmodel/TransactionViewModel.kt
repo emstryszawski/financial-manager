@@ -31,6 +31,12 @@ class TransactionViewModel(
         return liveData
     }
 
+    fun deleteTransaction(transaction: Transaction) {
+        viewModelScope.launch {
+            repository.delete(transaction)
+        }
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
 

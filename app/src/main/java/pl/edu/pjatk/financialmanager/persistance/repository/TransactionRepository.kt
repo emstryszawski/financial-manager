@@ -17,4 +17,8 @@ class TransactionRepository(private val transactionDao: TransactionDao) {
     suspend fun update(transaction: Transaction): Int = withContext(Dispatchers.IO) {
         return@withContext transactionDao.update(transaction)
     }
+
+    suspend fun delete(transaction: Transaction) {
+        transactionDao.delete(transaction)
+    }
 }

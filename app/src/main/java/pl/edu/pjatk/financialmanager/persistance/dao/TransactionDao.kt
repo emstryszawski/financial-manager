@@ -22,7 +22,7 @@ interface TransactionDao {
     suspend fun update(transaction: Transaction): Int
 
     @Delete
-    fun delete(transaction: Transaction)
+    suspend fun delete(transaction: Transaction)
 
     @Query("DELETE FROM `transaction`")
     fun deleteAll()
