@@ -117,6 +117,24 @@ class AddNewTransactionActivity : AppCompatActivity() {
                 }
             }
         }
+
+        binding.shareButton.setOnClickListener {
+            shareTransaction()
+        }
+    }
+
+    private fun shareTransaction() {
+        var title = binding.titleInputText.text.toString()
+        title = if (title.isEmpty()) "" else "$title,"
+        val amount = binding.amountInputText.text.toString()
+        val share = Intent.createChooser(Intent().apply {
+            type = "text/plain"
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, transaction.toString())
+
+            putExtra(Intent.EXTRA_TITLE, "$title $amount")
+        }, title)
+        startActivity(share)
     }
 
     private fun saveAndContinue() {

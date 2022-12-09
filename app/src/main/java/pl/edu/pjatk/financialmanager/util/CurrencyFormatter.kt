@@ -7,7 +7,7 @@ import java.util.*
 class CurrencyFormatter {
 
     companion object {
-        private val polandLocale: Locale = Locale("pl", "PL")
+        val polandLocale: Locale = Locale("pl", "PL")
 
         @JvmStatic
         fun formatStringToDecimal(string: String): BigDecimal {
