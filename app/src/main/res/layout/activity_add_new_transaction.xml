@@ -68,15 +68,31 @@
         android:id="@+id/saveAndContinueButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginBottom="50dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="16dp"
         android:text="@string/saveAndContinue"
-        android:textSize="24sp"
+        android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:cornerRadius="40dp"
+        app:layout_constraintBottom_toTopOf="@+id/shareButton"
         app:layout_constraintEnd_toEndOf="@+id/categorySpinner"
         app:layout_constraintStart_toStartOf="@+id/categorySpinner"
         app:layout_constraintTop_toBottomOf="@+id/categorySpinner" />
+
+    <Button
+        android:id="@+id/shareButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="50dp"
+        android:text="@string/share"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:cornerRadius="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/saveAndContinueButton"
+        app:layout_constraintStart_toStartOf="@+id/saveAndContinueButton" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/switchToIncome"

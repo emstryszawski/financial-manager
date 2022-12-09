@@ -83,9 +83,8 @@ class TransactionsAdapter(
             currentTransaction = transaction
 
             binding.placeName.text = transaction.title
-            binding.amount.text = CurrencyFormatter.toCurrencyFormat(transaction.amount)
-            binding.date.text =
-                String.format(transaction.dateOfTransaction.format(DateTimeFormatter.ISO_LOCAL_DATE))
+            binding.amount.text = transaction.formattedAmount
+            binding.date.text = transaction.formattedDateOfTransaction
             binding.category.text = transaction.category
         }
 
