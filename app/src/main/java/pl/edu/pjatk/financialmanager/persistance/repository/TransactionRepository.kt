@@ -1,5 +1,6 @@
 package pl.edu.pjatk.financialmanager.persistance.repository
 
+import android.database.Cursor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -21,4 +22,17 @@ class TransactionRepository(private val transactionDao: TransactionDao) {
     suspend fun delete(transaction: Transaction) {
         transactionDao.delete(transaction)
     }
+
+    val allTransactionsCursor: Cursor = transactionDao.getAllTransactionsWithCursor()
+
+    fun transactionCursor(id: Long): Cursor = transactionDao.getTransactionWithCursor(id)
+
+    fun insertOnMainThread(transaction: Transaction): Long =
+        transactionDao.insertOnMainThread(transaction)
+
+    fun updateOnMainThread(transaction: Transaction): Int =
+        transactionDao.updateOnMainThread(transaction)
+
+    fun deleteOnMainThread(id: Long): Int =
+        transactionDao.deleteOnMainThread(id)
 }

@@ -31,9 +31,9 @@ abstract class FinancialManagerDatabase : RoomDatabase() {
                     FinancialManagerDatabase::class.java,
                     "financial_manager_database"
                 )
+                    .allowMainThreadQueries()
                     .fallbackToDestructiveMigration()
-                    .addCallback(FinancialManagerDatabaseCallback(scope))
-                    .build()
+                    .addCallback(FinancialManagerDatabaseCallback(scope)).build()
                 INSTANCE = instance
                 instance
             }
@@ -54,29 +54,27 @@ abstract class FinancialManagerDatabase : RoomDatabase() {
         }
 
         // TODO this doesn't work
-        private fun populateDatabase(transactionDao: TransactionDao) {
-            transactionDao.deleteAll()
+        private suspend fun populateDatabase(transactionDao: TransactionDao) {
             scope.launch {
+                transactionDao.deleteAll()
                 transactionDao.insertAll(
-                    Transaction("Żabka", BigDecimal("21.19"), "Żywność", 0, LocalDateTime.now(), 1),
+                    Transaction("Żabka", BigDecimal("21.19"), "Żywność", 0, LocalDateTime.now()),
                     Transaction(
                         "Biedronka",
                         BigDecimal("130.99"),
                         "Żywność",
                         0,
-                        LocalDateTime.now(),
-                        2
+                        LocalDateTime.now()
                     ),
-                    Transaction("Myjnia", BigDecimal("30.00"), "Samochód", 0, LocalDateTime.now(), 3),
+                    Transaction("Myjnia", BigDecimal("30.00"), "Samochód", 0, LocalDateTime.now()),
                     Transaction(
                         "Paliwo",
                         BigDecimal("-300.12"),
                         "Samochód",
                         0,
-                        LocalDateTime.now(),
-                        4
+                        LocalDateTime.now()
                     ),
-                    Transaction("ITN", BigDecimal("900.00"), "Uczelnia", 0, LocalDateTime.now(), 5)
+                    Transaction("ITN", BigDecimal("900.00"), "Uczelnia", 0, LocalDateTime.now())
                 )
             }
         }
