@@ -10,8 +10,6 @@ import pl.edu.pjatk.financialmanager.R
 import pl.edu.pjatk.financialmanager.adapter.TransactionsAdapter.TransactionViewHolder
 import pl.edu.pjatk.financialmanager.databinding.TransactionBinding
 import pl.edu.pjatk.financialmanager.persistance.model.Transaction
-import pl.edu.pjatk.financialmanager.util.CurrencyFormatter
-import java.time.format.DateTimeFormatter
 
 class TransactionsAdapter(
     private val onClick: (Transaction) -> Unit,
