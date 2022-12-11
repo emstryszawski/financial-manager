@@ -1,5 +1,6 @@
 package pl.edu.pjatk.financialmanager.persistance.model
 
+import android.content.ContentValues
 import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -21,11 +22,28 @@ class Transaction(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") var id: Long = 0L
 ) : Parcelable {
 
+
     val formattedAmount: String get() = CurrencyFormatter.toCurrencyFormat(amount)
 
     val formattedDateOfTransaction: String
         get() = DateTimeFormatter.ofPattern("d MMMM yyyy", CurrencyFormatter.polandLocale)
             .format(dateOfTransaction)
+
+    companion object {
+        fun fromContentValues(contentValues: ContentValues?): Transaction? {
+            contentValues?.let { values ->
+                val title = values.getAsString("title") ?: ""
+                val amount = BigDecimal(values.getAsString("amount") ?: "0")
+                val category = values.getAsString("category") ?: "Bez kategorii"
+                val categoryItemPosition = values.getAsInteger("categoryItemPosition") ?: 0
+                val dateOfTransaction = LocalDateTime.parse(
+                    values.getAsString("dateOfTransaction") ?: LocalDateTime.now().toString()
+                )
+                return Transaction(title, amount, category, categoryItemPosition, dateOfTransaction)
+            }
+            return null
+        }
+    }
 
     fun isExpense(): Boolean = amount < BigDecimal.ZERO
 
