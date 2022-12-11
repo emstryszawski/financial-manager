@@ -4,6 +4,7 @@ import android.database.Cursor
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 import pl.edu.pjatk.financialmanager.persistance.model.Transaction
+import java.time.LocalDateTime
 
 @Dao
 interface TransactionDao {
@@ -12,6 +13,15 @@ interface TransactionDao {
 
     @Query("SELECT * FROM `transaction` WHERE id IN (:ids)")
     fun loadAllByIds(ids: IntArray): Flow<List<Transaction>>
+
+    @Query(
+        "SELECT * FROM `transaction`" +
+                " WHERE dateOfTransaction >= :startDate AND dateOfTransaction <= :endTime"
+    )
+    fun getTransactionsInInterval(
+        startDate: LocalDateTime,
+        endTime: LocalDateTime
+    ): List<Transaction>
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(transaction: Transaction): Long

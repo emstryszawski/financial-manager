@@ -18,4 +18,7 @@
     <string name="today">11/23/2022</string>
     <string name="SwitchIncome">Przychód?</string>
     <string name="share">Udostępnij</string>
+    <string name="openMonthlyChartContentDescription">Otwórz zestawienie miesiąca</string>
+    <string name="monthSpinnerContentDescription">Wybierz miesiąc</string>
+    <string name="yearSpinnerContentDescription">Wybierz rok</string>
 </resources>

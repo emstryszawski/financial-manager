@@ -46,6 +46,15 @@ class TransactionsListActivity : AppCompatActivity() {
         binding.newTransactionFab.setOnClickListener {
             addNewTransaction()
         }
+
+        binding.openMonthlyChart.setOnClickListener {
+            openMonthlyChart()
+        }
+    }
+
+    private fun openMonthlyChart() {
+        val intent = Intent(this, MonthlyChartActivity::class.java)
+        startActivity(intent)
     }
 
     private fun transactionOnLongClick(transaction: Transaction) {
@@ -65,6 +74,10 @@ class TransactionsListActivity : AppCompatActivity() {
 //        intent.putExtra("dateOfTransaction", transaction.dateOfTransaction)
         editTransactionLauncher.launch(intent)
     }
+
+//    private var openMonthlyChartLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(
+//        ActivityResultContracts.StartActivityForResult
+//    )
 
     private var editTransactionLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
